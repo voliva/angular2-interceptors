@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Http } from '@angular/http';
 import { InterceptorService } from './ng-interceptor/interceptor-service';
 
 @Component({
@@ -7,12 +8,12 @@ import { InterceptorService } from './ng-interceptor/interceptor-service';
 })
 export class AppComponent implements OnInit {
 	constructor(
-		private http:InterceptorService
+		private http:Http
 	){
 	}
 
 	ngOnInit() {
-		this.http.request("file.json", {interceptorOptions:{int:"yes"}}).subscribe((res) => {
+		this.http.request("file.json").subscribe((res) => {
 			console.log(res);
 		});
 	}

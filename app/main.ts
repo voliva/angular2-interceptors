@@ -3,11 +3,11 @@ import { AppComponent } from './app.component';
 import { provide }      from '@angular/core';
 
 import { InterceptorService } from './ng-interceptor/interceptor-service';
-import { HTTP_PROVIDERS, XHRBackend, RequestOptions } from '@angular/http';
+import { Http, HTTP_PROVIDERS, XHRBackend, RequestOptions } from '@angular/http';
 
 bootstrap(AppComponent, [
 	HTTP_PROVIDERS,
-	provide(InterceptorService, {
+	provide(Http, {
 		useFactory: (xhrBackend: XHRBackend, requestOptions: RequestOptions) => {
 			var ret = new InterceptorService(xhrBackend, requestOptions)
 			return ret;
