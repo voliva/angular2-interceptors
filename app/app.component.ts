@@ -1,17 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import { InterceptorService } from './ng-interceptor/index';
+import { LoadingComponent } from './loading.component';
 
 @Component({
   selector: 'my-app',
-  template: '<h1>My First Angular 2 App</h1>'
+  template: `
+  <h1>My First Angular 2 App</h1>
+  <button (click)="loadFile()">Load file</button>
+  <loading></loading>
+  `,
+  directives: [LoadingComponent]
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
 	constructor(
 		private http:InterceptorService
 	){
 	}
 
-	ngOnInit() {
+	loadFile() {
 		this.http.request("file.json", {interceptorOptions:{int:"yes"}}).subscribe((res) => {
 			console.log(res);
 		});

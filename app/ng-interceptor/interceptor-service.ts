@@ -68,8 +68,10 @@ export class InterceptorService extends Http {
     });
    }
    // If it's an error, forward the error
-   console.log(err); // Todo create a fake response and pass it to interceptors
-   return <Observable<any>><any>Observable.throw(err);
+   return Observable.of({
+     response: err,
+     interceptorOptions: err.interceptorOptions || {} // TODO
+   });
   })
    .flatMap((value: InterceptedResponse, index: number) => {
    var startOn = (value.intercepted) ? value.interceptorStep : this.interceptors.length - 1;
