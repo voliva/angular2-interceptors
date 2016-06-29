@@ -26,7 +26,7 @@ export class InterceptorService extends Http {
    Before interceptor
    patata
  */
- addBeforeInterceptor(interceptor: Interceptor) {
+ addInterceptor(interceptor: Interceptor) {
   this.interceptors.push(interceptor);
  }
 
@@ -76,7 +76,6 @@ export class InterceptorService extends Http {
    return this.runAfterInterceptors(value, startOn);
   })
    .flatMap((value: InterceptedResponse, index: number) => {
-     console.log(value.interceptorOptions);
    return Observable.of(value.response);
   });
  }

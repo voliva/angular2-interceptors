@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { InterceptorService } from './ng-interceptor/interceptor-service';
+import { InterceptorService } from './ng-interceptor/index';
 
 @Component({
   selector: 'my-app',
