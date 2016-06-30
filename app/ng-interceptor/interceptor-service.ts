@@ -49,7 +49,12 @@ export class InterceptorService extends Http {
         interceptorOptions: options
       }
     }
-   );
+   ).catch((err: any) => {
+     return Observable.of({
+       response: err,
+       interceptorOptions: value.interceptorOptions || {}
+     });
+   });
   })
    .catch((err: any) => {
    // If it's a cancel, create a fake response and pass it to next interceptors
@@ -66,12 +71,9 @@ export class InterceptorService extends Http {
      interceptorStep: err.position,
      interceptorOptions: err.interceptorOptions
     });
+   }else{
+     // We had an exception in the pipeline... woops? TODO
    }
-   // If it's an error, forward the error
-   return Observable.of({
-     response: err,
-     interceptorOptions: err.interceptorOptions || {} // TODO
-   });
   })
    .flatMap((value: InterceptedResponse, index: number) => {
    var startOn = (value.intercepted) ? value.interceptorStep : this.interceptors.length - 1;

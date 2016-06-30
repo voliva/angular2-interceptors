@@ -5,7 +5,7 @@ import { provide, ReflectiveInjector }      from '@angular/core';
 import { InterceptorService } from './ng-interceptor/index';
 import { HTTP_PROVIDERS, XHRBackend, RequestOptions } from '@angular/http';
 
-import { ServerUrlInterceptor, DenyInterceptor, LoadingService } from './interceptors';
+import { ServerUrlInterceptor, DenyInterceptor, LoadingService, CacheInterceptor } from './interceptors';
 
 bootstrap(AppComponent, [
 	HTTP_PROVIDERS,
@@ -16,6 +16,7 @@ bootstrap(AppComponent, [
 
 			var ret = new InterceptorService(xhrBackend, requestOptions);
 			ret.addInterceptor(new ServerUrlInterceptor());
+			ret.addInterceptor(new CacheInterceptor());
 			ret.addInterceptor(loadingService);
 			// ret.addInterceptor(new DenyInterceptor());
 			return ret;

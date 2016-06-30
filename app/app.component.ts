@@ -18,8 +18,8 @@ export class AppComponent {
 	}
 
 	loadFile() {
-		this.http.request("file.json", {interceptorOptions:{int:"yes"}}).subscribe((res) => {
-			console.log(res);
+		this.http.request("file.json").subscribe((res) => {
+			console.log(res.json());
 		});
 	}
 }

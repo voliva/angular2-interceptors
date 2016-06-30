@@ -6,7 +6,7 @@ export class ServerUrlInterceptor implements Interceptor {
 	public interceptBefore(request: InterceptedRequest): InterceptedRequest{
 		console.log("Before ServerUrlInterceptor");
 
-		request.url = "http://www.example.com/" + request.url;
+		// request.url = "http://www.example.com/" + request.url;
 		return request;
 	}
 
@@ -18,16 +18,50 @@ export class ServerUrlInterceptor implements Interceptor {
 }
 
 export class DenyInterceptor implements Interceptor {
-	public interceptBefore(request: InterceptedRequest): Observable<InterceptedRequest> {
+	public interceptBefore(request: InterceptedRequest): InterceptedRequest {
 		console.log("Before ServerUrlInterceptor");
 
 		return <any>(Observable.throw("cancelled"));
 	}
 
-	public interceptAfter(response: InterceptedResponse): Observable<InterceptedResponse> {
+	public interceptAfter(response: InterceptedResponse): InterceptedResponse {
 		console.log("After DenyInterceptor");
 
 		return response;
+	}
+}
+
+export class CacheInterceptor implements Interceptor {
+	private cache:any = {};
+
+	public interceptBefore(request: InterceptedRequest): InterceptedRequest {
+		console.log("Before CacheInterceptor");
+
+		let hash = this.getHash(request);
+		request.interceptorOptions.cacheHash = hash;
+
+		if(this.cache[hash]){
+			return <any>(Observable.throw("cancelled"));
+		}
+
+		return request;
+	}
+
+	public interceptAfter(response: InterceptedResponse): InterceptedResponse {
+		console.log("After CacheInterceptor");
+
+		let hash = response.interceptorOptions.cacheHash;
+		if(response.intercepted && this.cache[hash]){
+			return this.cache[hash];
+		}
+
+		this.cache[hash] = response;
+
+		return null;
+	}
+
+	private getHash(request: InterceptedRequest):string {
+		return request.url; // TODO Create a better hash...
 	}
 }
 
