@@ -26,7 +26,7 @@ export class InterceptorService extends Http {
    Before interceptor
    patata
  */
- addBeforeInterceptor(interceptor: Interceptor) {
+ addInterceptor(interceptor: Interceptor) {
   this.interceptors.push(interceptor);
  }
 
@@ -49,7 +49,12 @@ export class InterceptorService extends Http {
         interceptorOptions: options
       }
     }
-   );
+   ).catch((err: any) => {
+     return Observable.of({
+       response: err,
+       interceptorOptions: value.interceptorOptions || {}
+     });
+   });
   })
    .catch((err: any) => {
    // If it's a cancel, create a fake response and pass it to next interceptors
@@ -66,17 +71,15 @@ export class InterceptorService extends Http {
      interceptorStep: err.position,
      interceptorOptions: err.interceptorOptions
     });
+   }else{
+     // We had an exception in the pipeline... woops? TODO
    }
-   // If it's an error, forward the error
-   console.log(err); // Todo create a fake response and pass it to interceptors
-   return <Observable<any>><any>Observable.throw(err);
   })
    .flatMap((value: InterceptedResponse, index: number) => {
    var startOn = (value.intercepted) ? value.interceptorStep : this.interceptors.length - 1;
    return this.runAfterInterceptors(value, startOn);
   })
    .flatMap((value: InterceptedResponse, index: number) => {
-     console.log(value.interceptorOptions);
    return Observable.of(value.response);
   });
  }
@@ -114,7 +117,13 @@ export class InterceptorService extends Http {
    if (!bf.interceptBefore) continue;
 
    ret = ret.flatMap((value: InterceptedRequest, index: number) => {
-    return bf.interceptBefore(value).catch((err: any, caught: Observable<InterceptedRequest>) => {
+    let newObs:Observable<InterceptedRequest>;
+    let res = bf.interceptBefore(value);
+    if(!res) newObs = Observable.of(value);
+    else if(!(res instanceof Observable)) newObs = Observable.of(<any>res);
+    else newObs = <any>res;
+
+    return newObs.catch((err: any, caught: Observable<InterceptedRequest>) => {
      if (err == "cancelled") {
       return <Observable<any>><any>Observable.throw({
        error: "cancelled",
@@ -142,7 +151,14 @@ export class InterceptorService extends Http {
    if (!af.interceptAfter) continue;
 
    ret = ret.flatMap((value: InterceptedResponse, index) => {
-    return af.interceptAfter(value)
+    let newObs:Observable<InterceptedResponse>;
+
+    let res = af.interceptAfter(value);
+    if(!res) newObs = Observable.of(value);
+    else if(!(res instanceof Observable)) newObs = Observable.of(<any>res);
+    else newObs = <any>res;
+    
+    return newObs;
    });
   }
   return ret;
