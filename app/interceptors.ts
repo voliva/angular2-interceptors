@@ -3,17 +3,17 @@ import { Observable } from 'rxjs/Rx';
 import { Injectable } from '@angular/core';
 
 export class ServerUrlInterceptor implements Interceptor {
-	public interceptBefore(request: InterceptedRequest): Observable<InterceptedRequest> {
+	public interceptBefore(request: InterceptedRequest): InterceptedRequest{
 		console.log("Before ServerUrlInterceptor");
 
 		request.url = "http://www.example.com/" + request.url;
-		return Observable.of(request);
+		return request;
 	}
 
-	public interceptAfter(response: InterceptedResponse): Observable<InterceptedResponse> {
+	public interceptAfter(response: InterceptedResponse): InterceptedResponse {
 		console.log("After ServerUrlInterceptor", response.interceptorOptions.memory);
 
-		return Observable.of(response);
+		return response;
 	}
 }
 
@@ -27,7 +27,7 @@ export class DenyInterceptor implements Interceptor {
 	public interceptAfter(response: InterceptedResponse): Observable<InterceptedResponse> {
 		console.log("After DenyInterceptor");
 
-		return Observable.of(response);
+		return response;
 	}
 }
 
@@ -49,24 +49,24 @@ export class LoadingService implements Interceptor {
 		this.observers = [];
 	}
 
-	public interceptBefore(request: InterceptedRequest): Observable<InterceptedRequest> {
+	public interceptBefore(request: InterceptedRequest): InterceptedRequest {
 		console.log("Before ServerUrlInterceptor");
 
 		this.stack++;
 		if(this.stack == 1)
 			this.showLoading();
 
-		return Observable.of(request);
+		return request;
 	}
 
-	public interceptAfter(response: InterceptedResponse): Observable<InterceptedResponse> {
+	public interceptAfter(response: InterceptedResponse): InterceptedResponse {
 		console.log("After DenyInterceptor");
 
 		this.stack--;
 		if(this.stack == 0)
 			this.hideLoading();
 
-		return Observable.of(response);
+		return response;
 	}
 
 	public getObservable(){
