@@ -100,6 +100,7 @@ export class InterceptorService extends Http {
  put(url: string, body: string, options?: InterceptorOptions): Observable<Response> {
   options = options || {};
   options.method = RequestMethod.Put;
+  options.body = body;
   return this.request(url, options);
  }
 
@@ -158,7 +159,7 @@ export class InterceptorService extends Http {
     if(!res) newObs = Observable.of(value);
     else if(!(res instanceof Observable)) newObs = Observable.of(<any>res);
     else newObs = <any>res;
-    
+
     return newObs;
    });
   }
