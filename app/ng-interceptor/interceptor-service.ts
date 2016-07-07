@@ -93,6 +93,7 @@ export class InterceptorService extends Http {
  post(url: string, body: string, options?: InterceptorOptions): Observable<Response> {
   options = options || {};
   options.method = RequestMethod.Post;
+  options.body = body;
   return this.request(url, options);
  }
 
