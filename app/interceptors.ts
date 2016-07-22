@@ -84,7 +84,7 @@ export class LoadingService implements Interceptor {
 	}
 
 	public interceptBefore(request: InterceptedRequest): InterceptedRequest {
-		console.log("Before ServerUrlInterceptor");
+		console.log("Before Loading");
 
 		this.stack++;
 		if(this.stack == 1)
@@ -94,7 +94,7 @@ export class LoadingService implements Interceptor {
 	}
 
 	public interceptAfter(response: InterceptedResponse): InterceptedResponse {
-		console.log("After DenyInterceptor");
+		console.log("After Loading");
 
 		this.stack--;
 		if(this.stack == 0)
@@ -116,7 +116,7 @@ export class LoadingService implements Interceptor {
 	}
 	private hideLoading(){
 		console.log("hideLoading");
-		
+
 		this.observers.forEach(function(obs){
 			obs.next(false);
 		});
