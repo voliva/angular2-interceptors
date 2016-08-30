@@ -33,6 +33,7 @@ export class InterceptorService extends Http {
  /** Parent overrides **/
  request(url: string, options?: InterceptorOptions): Observable<Response> {
   options = options || {};
+  options.headers = options.headers || new Headers();
   return <Observable<Response>>this.runBeforeInterceptors({
    url: url,
    options: options,
