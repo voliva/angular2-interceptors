@@ -3,7 +3,7 @@ import { Observable } from 'rxjs/Rx';
 import { Injectable } from '@angular/core';
 
 export class ServerUrlInterceptor implements Interceptor {
-	public interceptBefore(request: InterceptedRequest): InterceptedRequest{
+	public interceptBefore(request: InterceptedRequest): InterceptedRequest {
 		console.log("Before ServerUrlInterceptor");
 
 		// request.url = "http://www.example.com/" + request.url;
@@ -19,7 +19,7 @@ export class ServerUrlInterceptor implements Interceptor {
 
 export class DenyInterceptor implements Interceptor {
 	public interceptBefore(request: InterceptedRequest): InterceptedRequest {
-		console.log("Before ServerUrlInterceptor");
+		console.log("Before DenyInterceptor");
 
 		return <any>(Observable.throw("cancelled"));
 	}
@@ -32,7 +32,7 @@ export class DenyInterceptor implements Interceptor {
 }
 
 export class CacheInterceptor implements Interceptor {
-	private cache:any = {};
+	private cache: any = {};
 
 	public interceptBefore(request: InterceptedRequest): InterceptedRequest {
 		console.log("Before CacheInterceptor");
@@ -40,7 +40,7 @@ export class CacheInterceptor implements Interceptor {
 		let hash = this.getHash(request);
 		request.interceptorOptions.cacheHash = hash;
 
-		if(this.cache[hash]){
+		if (this.cache[hash]) {
 			return <any>(Observable.throw("cancelled"));
 		}
 
@@ -51,7 +51,7 @@ export class CacheInterceptor implements Interceptor {
 		console.log("After CacheInterceptor");
 
 		let hash = response.interceptorOptions.cacheHash;
-		if(response.intercepted && this.cache[hash]){
+		if (response.intercepted && this.cache[hash]) {
 			return this.cache[hash];
 		}
 
@@ -60,18 +60,18 @@ export class CacheInterceptor implements Interceptor {
 		return null;
 	}
 
-	private getHash(request: InterceptedRequest):string {
+	private getHash(request: InterceptedRequest): string {
 		return request.url; // TODO Create a better hash...
 	}
 }
 
 @Injectable()
 export class LoadingService implements Interceptor {
-	private stack:number;
-	private observable:Observable<any>
-	private observers:any[];
+	private stack: number;
+	private observable: Observable<any>
+	private observers: any[];
 
-	constructor(){
+	constructor() {
 		this.stack = 0;
 		this.observable = Observable.create((observer) => {
 			this.observers.push(observer);
@@ -87,7 +87,7 @@ export class LoadingService implements Interceptor {
 		console.log("Before Loading");
 
 		this.stack++;
-		if(this.stack == 1)
+		if (this.stack == 1)
 			this.showLoading();
 
 		return request;
@@ -97,27 +97,27 @@ export class LoadingService implements Interceptor {
 		console.log("After Loading");
 
 		this.stack--;
-		if(this.stack == 0)
+		if (this.stack == 0)
 			this.hideLoading();
 
 		return response;
 	}
 
-	public getObservable(){
+	public getObservable() {
 		return this.observable;
 	}
 
-	private showLoading(){
+	private showLoading() {
 		console.log("showLoading");
 
-		this.observers.forEach(function(obs){
+		this.observers.forEach(function(obs) {
 			obs.next(true);
 		});
 	}
-	private hideLoading(){
+	private hideLoading() {
 		console.log("hideLoading");
 
-		this.observers.forEach(function(obs){
+		this.observers.forEach(function(obs) {
 			obs.next(false);
 		});
 	}

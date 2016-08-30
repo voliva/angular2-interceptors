@@ -2,15 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { LoadingService } from './interceptors';
 
 @Component({
-  selector: 'loading',
-  template: '<div *ngIf="display">Loading</div>'
+	selector: 'loading',
+	template: '<div *ngIf="display">Loading</div>'
 })
 export class LoadingComponent implements OnInit {
-	display:boolean = false;
+	display: boolean = false;
 
 	constructor(
-		private loading:LoadingService
-	){
+		private loading: LoadingService
+	) {
 	}
 
 	ngOnInit() {

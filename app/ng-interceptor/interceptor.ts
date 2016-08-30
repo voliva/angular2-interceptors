@@ -3,6 +3,6 @@ import { InterceptedResponse } from "./intercepted-response.ts";
 import { Observable } from 'rxjs/Rx';
 
 export interface Interceptor {
-  interceptBefore?(request: InterceptedRequest): Observable<InterceptedRequest> | InterceptedRequest
-  interceptAfter?(response: InterceptedResponse): Observable<InterceptedResponse> | InterceptedResponse
+	interceptBefore?(request: InterceptedRequest): Observable<InterceptedRequest> | InterceptedRequest
+	interceptAfter?(response: InterceptedResponse): Observable<InterceptedResponse> | InterceptedResponse
 }
