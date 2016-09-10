@@ -119,7 +119,7 @@ export class InterceptorService extends Http {
 			let bf: Interceptor = this.interceptors[i];
 			if (!bf.interceptBefore) continue;
 
-			ret = ret.flatMap((value: InterceptedRequest, index: number) => {
+			ret = ret.flatMap<InterceptedRequest>((value: InterceptedRequest, index: number) => {
 				let newObs: Observable<InterceptedRequest>;
 				let res = null;
 				try {
@@ -158,7 +158,7 @@ export class InterceptorService extends Http {
 			let af: Interceptor = this.interceptors[i];
 			if (!af.interceptAfter) continue;
 
-			ret = ret.flatMap((value: InterceptedResponse, index) => {
+			ret = ret.flatMap<InterceptedResponse>((value: InterceptedResponse, index) => {
 				let newObs: Observable<InterceptedResponse>;
 
 				let res = null;
