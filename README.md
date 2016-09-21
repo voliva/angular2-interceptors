@@ -35,7 +35,34 @@ If you are using a version of `angular-cli` that's still using SystemJS, you nee
 ## Usage
 
 Interceptors are registered when the service is created (to avoid any race-condition). To do so, you have to provide the instance of the service by yourself. So on your module declaration, you should put a provider like:
+
 ````typescript
+import { provideInterceptorService } from 'ng2-interceptors';
+
+@NgModule({
+  declarations: [
+    ...
+  ],
+  imports: [
+    ...,
+    HttpModule
+  ],
+  providers: [
+    provideInterceptorService([
+      // Add interceptors here, like "new ServerURLInterceptor()" or just "ServerURLInterceptor" if it has a provider
+    ])
+  ],
+  bootstrap: [AppComponent]
+})
+
+````
+
+This simplifies the way to provide the service, but it's equivalent to:
+
+````typescript
+import { InterceptorService } from 'ng2-interceptors';
+import { XHRBackend, RequestOptions } from '@angular/http';
+
 @NgModule({
   declarations: [
     ...
@@ -59,8 +86,7 @@ Interceptors are registered when the service is created (to avoid any race-condi
 })
 ````
 
-Notice how you have to inject `XHRBackend` and `RequestOptions`. We're working on not needing this in a future.
-Also, InterceptorService extends from `@angular/http Http` service, so the API is exactly the same. 
+Also, InterceptorService extends from `@angular/http Http` service, so the API is exactly the same.
 
 ### Concept
 
@@ -77,10 +103,10 @@ To implement one interceptor you just have to create a class that _implements_ I
 ````typescript
 import { Interceptor, InterceptedRequest, InterceptedResponse } from 'ng2-interceptors';
 
-export class DenyInterceptor implements Interceptor {
+export class ServerURLInterceptor implements Interceptor {
 	public interceptBefore(request: InterceptedRequest): InterceptedRequest {
 		// Do whatever with request: get info or edit it
-		
+
 		return request;
 		/*
 		  You can return:
@@ -96,7 +122,7 @@ export class DenyInterceptor implements Interceptor {
 		return response;
 		/*
 		  You can return:
-		    - Request: The modified response
+		    - Response: The modified response
 		    - Nothing: For convenience: It's just like returning the response
 		*/
 	}
@@ -130,17 +156,30 @@ For instance, an interceptor that shows a loading spinner every time we have a c
 
 To do that it's pretty straightforward: create a Service (`@Injectable()` annotation) that `implements Interceptor` and the interceptor methods. Then to include them in the interceptor pipeline:
 ````typescript
-  providers: [
-    LoadingService, // We declare it's provider
-    {
-      provide: InterceptorService,
-      useFactory: (xhrBackend: XHRBackend, requestOptions: RequestOptions, loadingService:LoadingService) => {
-        let service = new InterceptorService(xhrBackend, requestOptions);
-        service.addInterceptor(loadingService); // Add into the pipeline
-        service.addInterceptor(new ServerURLInterceptor());
-        return service;
-      },
-      deps: [XHRBackend, RequestOptions, LoadingService] // Add it to the dependency array
-    }
-  ]
+providers: [
+  LoadingService, // We declare it's provider
+  provideInterceptorService([
+    LoadingService,
+    /* Provider-less interceptors can be added like this as well */
+    new ServerURLInterceptor()
+  ])
+]
+````
+
+If for some reason you need the low-level implementation, this is equivalent to:
+````typescript
+providers: [
+  LoadingService, // We declare it's provider
+  {
+    provide: InterceptorService,
+    useFactory: (xhrBackend: XHRBackend, requestOptions: RequestOptions, loadingService:LoadingService) => {
+      let service = new InterceptorService(xhrBackend, requestOptions);
+      service.addInterceptor(loadingService); // Add into the pipeline
+      service.addInterceptor(new ServerURLInterceptor());
+      return service;
+    },
+    /* Important: Add it to the deps array in the same order the useFactory method is declared */
+    deps: [XHRBackend, RequestOptions, LoadingService]
+  }
+]
 ````
