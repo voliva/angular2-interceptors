@@ -39,7 +39,7 @@ export class InterceptorService extends Http {
 			options: options,
 			interceptorOptions: options.interceptorOptions || {}
 		})
-		.flatMap((value: InterceptedRequest, index: number) => {
+		.flatMap<InterceptedRequest, any>((value: InterceptedRequest, index: number) => {
 			// We return an observable that merges the result of the request plus the interceptorOptions we need
 			return Observable.zip(
 				super.request(value.url, value.options),
@@ -57,7 +57,7 @@ export class InterceptorService extends Http {
 				});
 			});
 		})
-		.catch((err: any) => {
+		.catch<any, any>((err: any) => {
 			// If it's a cancel, create a fake response and pass it to next interceptors
 			if (err.error == "cancelled") {
 				var response = new ResponseOptions({
@@ -82,6 +82,12 @@ export class InterceptorService extends Http {
 		})
 		.flatMap((value: InterceptedResponse, index: number) => {
 			return Observable.of(value.response);
+		})
+		.flatMap((value: Response, index: number) => {
+			if (!value.ok)
+				return Observable.throw(value);
+
+			return Observable.of(value);
 		});
 	}
 
@@ -119,7 +125,7 @@ export class InterceptorService extends Http {
 			let bf: Interceptor = this.interceptors[i];
 			if (!bf.interceptBefore) continue;
 
-			ret = ret.flatMap<InterceptedRequest>((value: InterceptedRequest, index: number) => {
+			ret = ret.flatMap<InterceptedRequest, any>((value: InterceptedRequest, index: number) => {
 				let newObs: Observable<InterceptedRequest>;
 				let res = null;
 				try {
@@ -158,7 +164,7 @@ export class InterceptorService extends Http {
 			let af: Interceptor = this.interceptors[i];
 			if (!af.interceptAfter) continue;
 
-			ret = ret.flatMap<InterceptedResponse>((value: InterceptedResponse, index) => {
+			ret = ret.flatMap<InterceptedResponse, any>((value: InterceptedResponse, index) => {
 				let newObs: Observable<InterceptedResponse>;
 
 				let res = null;
