@@ -2,6 +2,7 @@ import {
 	ConnectionBackend,
 	Headers,
 	Http,
+	Request,
 	Response,
 	ResponseOptions,
 	RequestMethod,
@@ -31,15 +32,11 @@ export class InterceptorService extends Http {
 	}
 
 	/** Parent overrides **/
-	request(url: string, options?: InterceptorOptions): Observable<Response> {
-		options = options || {};
-		options.headers = options.headers || new Headers();
-		return <Observable<Response>>this.runBeforeInterceptors({
-			url: url,
-			options: options,
-			interceptorOptions: options.interceptorOptions || {}
-		})
-		.flatMap((value: InterceptedRequest, index: number) => {
+	private httpRequest(request:InterceptedRequest): Observable<Response> {
+		request.options = request.options || {};
+		request.options.headers = request.options.headers || new Headers();
+		return <Observable<Response>>this.runBeforeInterceptors(request)
+		.flatMap<InterceptedRequest>((value: InterceptedRequest, index: number) => {
 			// We return an observable that merges the result of the request plus the interceptorOptions we need
 			return Observable.zip(
 				super.request(value.url, value.options),
@@ -57,7 +54,7 @@ export class InterceptorService extends Http {
 				});
 			});
 		})
-		.catch((err: any) => {
+		.catch<any>((err: any) => {
 			// If it's a cancel, create a fake response and pass it to next interceptors
 			if (err.error == "cancelled") {
 				var response = new ResponseOptions({
@@ -82,32 +79,105 @@ export class InterceptorService extends Http {
 		})
 		.flatMap((value: InterceptedResponse, index: number) => {
 			return Observable.of(value.response);
+		})
+		.flatMap((value: Response, index: number) => {
+			if (!value.ok)
+				return Observable.throw(value);
+
+			return Observable.of(value);
 		});
 	}
 
+	request(url: string|Request, options?: InterceptorOptions): Observable<Response> {
+		let responseObservable: any;
+		if (typeof url === 'string') {
+			responseObservable = this.httpRequest({
+				url: url,
+				options: options,
+				interceptorOptions: options.interceptorOptions || {}
+			});
+		} else if (url instanceof Request) {
+			let request:Request = url;
+			responseObservable = this.httpRequest({
+				url: request.url,
+				options: {
+					method: request.method,
+					headers: request.headers,
+					url: request.url,
+					withCredentials: request.withCredentials,
+					responseType: request.responseType
+				},
+				interceptorOptions: options.interceptorOptions || {}
+			});
+		} else {
+			throw new Error('First argument must be a url string or Request instance.');
+		}
+		return responseObservable;
+	}
+
+	/**
+	 * Performs a request with `get` http method.
+	 */
 	get(url: string, options?: InterceptorOptions): Observable<Response> {
 		options = options || {};
 		options.method = RequestMethod.Get;
 		return this.request(url, options);
 	}
 
-	post(url: string, body: string, options?: InterceptorOptions): Observable<Response> {
+	/**
+	 * Performs a request with `post` http method.
+	 */
+	post(url: string, body: any, options?: InterceptorOptions): Observable<Response> {
 		options = options || {};
 		options.method = RequestMethod.Post;
 		options.body = body;
 		return this.request(url, options);
 	}
 
-	put(url: string, body: string, options?: InterceptorOptions): Observable<Response> {
+	/**
+	 * Performs a request with `put` http method.
+	 */
+	put(url: string, body: any, options?: InterceptorOptions): Observable<Response> {
 		options = options || {};
 		options.method = RequestMethod.Put;
 		options.body = body;
 		return this.request(url, options);
 	}
 
+	/**
+	 * Performs a request with `delete` http method.
+	 */
 	delete(url: string, options?: InterceptorOptions): Observable<Response> {
 		options = options || {};
 		options.method = RequestMethod.Delete;
+		return this.request(url, options);
+	}
+
+	/**
+	 * Performs a request with `patch` http method.
+	 */
+	patch(url: string, body: any, options?: InterceptorOptions): Observable<Response> {
+		options = options || {};
+		options.method = RequestMethod.Patch;
+		options.body = body;
+		return this.request(url, options);
+	}
+
+	/**
+	 * Performs a request with `head` http method.
+	 */
+	head(url: string, options?: InterceptorOptions): Observable<Response> {
+		options = options || {};
+		options.method = RequestMethod.Head;
+		return this.request(url, options);
+	}
+
+	/**
+	 * Performs a request with `options` http method.
+	 */
+	options(url: string, options?: InterceptorOptions): Observable<Response> {
+		options = options || {};
+		options.method = RequestMethod.Options;
 		return this.request(url, options);
 	}
 
