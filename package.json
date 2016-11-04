@@ -1,6 +1,6 @@
 {
   "name": "ng2-interceptors",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Angular2 interceptor service implementation",
   "keywords": [
     "Angular 2",
