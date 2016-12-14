@@ -35,8 +35,8 @@ export class InterceptorService extends Http {
 	private httpRequest(request:InterceptedRequest): Observable<Response> {
 		request.options = request.options || {};
 		request.options.headers = request.options.headers || new Headers();
-		return <Observable<Response>>this.runBeforeInterceptors(request)
-		.flatMap<InterceptedRequest>((value: InterceptedRequest, index: number) => {
+		return this.runBeforeInterceptors(request)
+		.flatMap<InterceptedRequest, InterceptedResponse>((value: InterceptedRequest, index: number) => {
 			// We return an observable that merges the result of the request plus the interceptorOptions we need
 			return Observable.zip(
 				super.request(value.url, value.options),
@@ -45,16 +45,16 @@ export class InterceptorService extends Http {
 					return {
 						response: response,
 						interceptorOptions: options
-					}
+					} as InterceptedResponse;
 				}
 			).catch((err: any) => {
 				return Observable.of({
 					response: err,
 					interceptorOptions: value.interceptorOptions || {}
-				});
+				} as InterceptedResponse);
 			});
 		})
-		.catch<any>((err: any) => {
+		.catch<InterceptedResponse, InterceptedResponse>((err: any) => {
 			// If it's a cancel, create a fake response and pass it to next interceptors
 			if (err.error == "cancelled") {
 				var response = new ResponseOptions({
@@ -89,6 +89,7 @@ export class InterceptorService extends Http {
 	}
 
 	request(url: string|Request, options?: InterceptorOptions): Observable<Response> {
+		options = options || {};
 		let responseObservable: any;
 		if (typeof url === 'string') {
 			responseObservable = this.httpRequest({
@@ -189,7 +190,7 @@ export class InterceptorService extends Http {
 			let bf: Interceptor = this.interceptors[i];
 			if (!bf.interceptBefore) continue;
 
-			ret = ret.flatMap<InterceptedRequest>((value: InterceptedRequest, index: number) => {
+			ret = ret.flatMap<InterceptedRequest, InterceptedRequest>((value: InterceptedRequest, index: number) => {
 				let newObs: Observable<InterceptedRequest>;
 				let res = null;
 				try {
@@ -228,7 +229,7 @@ export class InterceptorService extends Http {
 			let af: Interceptor = this.interceptors[i];
 			if (!af.interceptAfter) continue;
 
-			ret = ret.flatMap<InterceptedResponse>((value: InterceptedResponse, index) => {
+			ret = ret.flatMap<InterceptedResponse, InterceptedResponse>((value: InterceptedResponse, index) => {
 				let newObs: Observable<InterceptedResponse>;
 
 				let res = null;
