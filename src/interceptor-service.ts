@@ -106,7 +106,8 @@ export class InterceptorService extends Http {
 					headers: request.headers,
 					url: request.url,
 					withCredentials: request.withCredentials,
-					responseType: request.responseType
+					responseType: request.responseType,
+					body: request.getBody()
 				},
 				interceptorOptions: options.interceptorOptions || {}
 			});
@@ -122,6 +123,7 @@ export class InterceptorService extends Http {
 	get(url: string, options?: InterceptorOptions): Observable<Response> {
 		options = options || {};
 		options.method = options.method || RequestMethod.Get;
+		options.url = options.url || url;
 		return this.request(url, options);
 	}
 
@@ -131,6 +133,7 @@ export class InterceptorService extends Http {
 	post(url: string, body: any, options?: InterceptorOptions): Observable<Response> {
 		options = options || {};
 		options.method = options.method || RequestMethod.Post;
+		options.url = options.url || url;
 		options.body = options.body || body;
 		return this.request(url, options);
 	}
@@ -141,6 +144,7 @@ export class InterceptorService extends Http {
 	put(url: string, body: any, options?: InterceptorOptions): Observable<Response> {
 		options = options || {};
 		options.method = options.method || RequestMethod.Put;
+		options.url = options.url || url;
 		options.body = options.body || body;
 		return this.request(url, options);
 	}
@@ -151,6 +155,7 @@ export class InterceptorService extends Http {
 	delete(url: string, options?: InterceptorOptions): Observable<Response> {
 		options = options || {};
 		options.method = options.method || RequestMethod.Delete;
+		options.url = options.url || url;
 		return this.request(url, options);
 	}
 
@@ -160,6 +165,7 @@ export class InterceptorService extends Http {
 	patch(url: string, body: any, options?: InterceptorOptions): Observable<Response> {
 		options = options || {};
 		options.method = options.method || RequestMethod.Patch;
+		options.url = options.url || url;
 		options.body = options.body || body;
 		return this.request(url, options);
 	}
@@ -170,6 +176,7 @@ export class InterceptorService extends Http {
 	head(url: string, options?: InterceptorOptions): Observable<Response> {
 		options = options || {};
 		options.method = options.method || RequestMethod.Head;
+		options.url = options.url || url;
 		return this.request(url, options);
 	}
 
@@ -179,6 +186,7 @@ export class InterceptorService extends Http {
 	options(url: string, options?: InterceptorOptions): Observable<Response> {
 		options = options || {};
 		options.method = options.method || RequestMethod.Options;
+		options.url = options.url || url;
 		return this.request(url, options);
 	}
 
