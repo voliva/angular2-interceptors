@@ -20,17 +20,17 @@
     "build": "rimraf lib && tsc -p src"
   },
   "peerDependencies": {
-    "@angular/core": "^2.0.0",
-    "@angular/http": "^2.0.0",
-    "rxjs": "5.0.0-beta.12"
+    "@angular/core": "^2.4.0",
+    "@angular/http": "^2.4.0",
+    "rxjs": "5.0.0"
   },
   "devDependencies": {
-    "@angular/common": "^2.0.0",
-    "@angular/core": "^2.0.0",
-    "@angular/http": "^2.0.0",
-    "@angular/platform-browser": "^2.0.0",
-    "rxjs": "^5.0.0-beta.12",
+    "@angular/common": "^2.4.0",
+    "@angular/core": "^2.4.0",
+    "@angular/http": "^2.4.0",
+    "@angular/platform-browser": "^2.4.0",
+    "rxjs": "^5.0.1",
     "typescript": "^2.0.3",
-    "zone.js": "^0.6.21"
+    "zone.js": "^0.7.2"
   }
 }

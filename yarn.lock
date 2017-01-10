@@ -2,25 +2,25 @@
 # yarn lockfile v1
 
 
-"@angular/common@^2.0.0":
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/@angular/common/-/common-2.3.0.tgz#16b0034fe43ae70875343f23e19835435edd118e"
+"@angular/common@^2.4.0":
+  version "2.4.2"
+  resolved "https://registry.yarnpkg.com/@angular/common/-/common-2.4.2.tgz#7a32c76808cbd0e80ffcd6e1fd68f58fc8d0ff61"
 
-"@angular/core@^2.0.0":
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/@angular/core/-/core-2.3.0.tgz#e60bd398584d69467d075d001b718364174a2534"
+"@angular/core@^2.4.0":
+  version "2.4.2"
+  resolved "https://registry.yarnpkg.com/@angular/core/-/core-2.4.2.tgz#774fb675733437be5eab635ab13235c76ec961ba"
 
-"@angular/http@^2.0.0":
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/@angular/http/-/http-2.3.0.tgz#0c0823d69723d96d294e58881397fec1ed803f73"
+"@angular/http@^2.4.0":
+  version "2.4.2"
+  resolved "https://registry.yarnpkg.com/@angular/http/-/http-2.4.2.tgz#5fbebcc19e454b59968e9896997fff45ae3bdee8"
 
-"@angular/platform-browser@^2.0.0":
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/@angular/platform-browser/-/platform-browser-2.3.0.tgz#93259309cfb4e8fdb39ececa0b205f4caf002e6c"
+"@angular/platform-browser@^2.4.0":
+  version "2.4.2"
+  resolved "https://registry.yarnpkg.com/@angular/platform-browser/-/platform-browser-2.4.2.tgz#06d0382a050d3abe115a6538eaa40e6fa5e80a6a"
 
-rxjs@^5.0.0-beta.12:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-5.0.1.tgz#3a69bdf9f0ca0a986303370d4708f72bdfac8356"
+rxjs@^5.0.1:
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-5.0.3.tgz#fc8bdf464ebf938812748e4196788f392fef9754"
   dependencies:
     symbol-observable "^1.0.1"
 
@@ -32,6 +32,6 @@ typescript@^2.0.3:
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.1.4.tgz#b53b69fb841126acb1dd4b397d21daba87572251"
 
-zone.js@^0.6.21:
-  version "0.6.26"
-  resolved "https://registry.yarnpkg.com/zone.js/-/zone.js-0.6.26.tgz#067c13b8b80223a89b62e9dc82680f09762c4636"
+zone.js@^0.7.2:
+  version "0.7.4"
+  resolved "https://registry.yarnpkg.com/zone.js/-/zone.js-0.7.4.tgz#0e624fe5b724450ee433495deff15c02b3908ee0"
