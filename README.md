@@ -6,9 +6,9 @@ This package adds the interceptor feature to Angular 2, by extending the @angula
 
 To install, just run in your angular project:
 
-````
+```javascript
 npm install ng2-interceptors --save
-````
+```
 
 And it should be importable with webpack out of the box
 
@@ -16,7 +16,8 @@ And it should be importable with webpack out of the box
 ## Set up InterceptorService
 Interceptors are registered when the service is created (to avoid any race-condition). To do so, you have to provide the instance of the service by yourself. So on your module declaration, you should put a provider like:
 
-````
+```javascript
+
 import { InterceptorService } from 'ng2-interceptors';
 import { XHRBackend, RequestOptions } from '@angular/http';
 
@@ -43,11 +44,12 @@ export function interceptorFactory(xhrBackend: XHRBackend, requestOptions: Reque
   ],
   bootstrap: [AppComponent]
 })
-````
+```
 
 There's a shorthand for this setup by using `provideInterceptorService`, but if you use AoT (Ahead-of-time) compilation it will fail. In fact, exporting the `interceptorFactory` is to make the AoT Compiler, as it needs all functions used in the provider to be exported.
 
-````
+```javascript
+
 import { provideInterceptorService } from 'ng2-interceptors';
 
 @NgModule({
@@ -65,11 +67,11 @@ import { provideInterceptorService } from 'ng2-interceptors';
   ],
   bootstrap: [AppComponent]
 })
-````
+```
 
 ## Using InterceptorService
 Once we have it set up, we can use it in our Controllers as if we were using the default Angular `Http` service:
-````
+```javascript
 import { Component } from '@angular/core';
 import { InterceptorService } from 'ng2-interceptors';
 
@@ -91,21 +93,22 @@ export class MyComponent {
       () => console.log("Yay"));
   }
 }
-````
+```
 
 We can also "cheat" the Injector so that every time we ask for the `Http` we get the `InterceptorService` instead. All we have to do is replace `InterceptorService` on the provider definition for `Http`, and then we can get our service when we use `private http: Http`:
-````
+
+```javascript
   {
     provide: Http,
     useFactory: interceptorFactory,
     deps: [XHRBackend, RequestOptions]
   }
-````
+```
 
 ## Creating your own Interceptor
 Basically, an interceptor is represented by one pair of functions: One that will get the request that's about to be sent to the server, and another that will get the response that the server just sent. For that, we just need to create a new class that implements Interceptor:
 
-````
+```javascript
 import { Interceptor, InterceptedRequest, InterceptedResponse } from 'ng2-interceptors';
 
 export class ServerURLInterceptor implements Interceptor {
@@ -132,13 +135,13 @@ export class ServerURLInterceptor implements Interceptor {
         */
     }
 }
-````
+```
 
 Both methods are optional, so you can implement Interceptors that just take request or responses.
 
 Notice how there's a different object of `InterceptedRequest` and `InterceptedResponse`: They are modifications of angular's Http `Request` and `Response` needed for the whole Interceptor feature and to pass additional options that may be needed for specific interceptors (like to enable/disable them for specific calls, etc.) the API is:
 
-````
+```javascript
 interface InterceptedRequest {
     url: string,
     options?: RequestOptionsArgs, // Angular's HTTP Request options
@@ -148,7 +151,7 @@ interface InterceptedResponse {
     response: Response, // Angular's HTTP Response
     interceptorOptions?: any
 }
-````
+```
 `interceptorOptions` on `InterceptedRequest` is guaranteed to be the same of that one of `InterceptedResponse` for the same call: The stuff you put in `interceptorOptions` while in `interceptBefore` will be available when you get `interceptAfter` called.
 
 ## Creating one Injectable Interceptor
@@ -166,7 +169,7 @@ To do that you have to do some steps in the module/factory declaration file:
 If you are using the `provideInterceptorService` option (without AoT Compiler support), then you can skip steps 2-4.
 
 If our `ServerURLInterceptor` were a Service, we would have a module declaration like:
-````
+```javascript
 import { InterceptorService } from 'ng2-interceptors';
 import { ServerURLInterceptor } from './services/serverURLInterceptor';
 import { XHRBackend, RequestOptions } from '@angular/http';
@@ -195,4 +198,4 @@ export function interceptorFactory(xhrBackend: XHRBackend, requestOptions: Reque
   ],
   bootstrap: [AppComponent]
 })
-````
+```
