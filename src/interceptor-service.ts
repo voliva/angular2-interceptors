@@ -33,7 +33,7 @@ export class InterceptorService extends Http {
 
 	/** Parent overrides **/
 	private httpRequest(request:InterceptedRequest): Observable<Response> {
-		request.options = request.options || {};
+		request.options = this.getOptions(request.options);
 		request.options.headers = request.options.headers || new Headers();
 		return this.runBeforeInterceptors(request)
 		.flatMap<InterceptedRequest, InterceptedResponse>((value: InterceptedRequest, index: number) => {
@@ -117,11 +117,19 @@ export class InterceptorService extends Http {
 		return responseObservable;
 	}
 
+  getOptions(options ?: InterceptorOptions): InterceptorOptions {
+    if (options) {
+      // Shallow copy to avoid modifying method/url on incoming options
+      return {...options};
+    }
+    return {};
+  }
+
 	/**
 	 * Performs a request with `get` http method.
 	 */
 	get(url: string, options?: InterceptorOptions): Observable<Response> {
-		options = options || {};
+		options = this.getOptions(options);
 		options.method = options.method || RequestMethod.Get;
 		options.url = options.url || url;
 		return this.request(url, options);
@@ -131,7 +139,7 @@ export class InterceptorService extends Http {
 	 * Performs a request with `post` http method.
 	 */
 	post(url: string, body: any, options?: InterceptorOptions): Observable<Response> {
-		options = options || {};
+		options = this.getOptions(options);
 		options.method = options.method || RequestMethod.Post;
 		options.url = options.url || url;
 		options.body = options.body || body;
@@ -142,7 +150,7 @@ export class InterceptorService extends Http {
 	 * Performs a request with `put` http method.
 	 */
 	put(url: string, body: any, options?: InterceptorOptions): Observable<Response> {
-		options = options || {};
+		options = this.getOptions(options);
 		options.method = options.method || RequestMethod.Put;
 		options.url = options.url || url;
 		options.body = options.body || body;
@@ -153,7 +161,7 @@ export class InterceptorService extends Http {
 	 * Performs a request with `delete` http method.
 	 */
 	delete(url: string, options?: InterceptorOptions): Observable<Response> {
-		options = options || {};
+		options = this.getOptions(options);
 		options.method = options.method || RequestMethod.Delete;
 		options.url = options.url || url;
 		return this.request(url, options);
@@ -163,7 +171,7 @@ export class InterceptorService extends Http {
 	 * Performs a request with `patch` http method.
 	 */
 	patch(url: string, body: any, options?: InterceptorOptions): Observable<Response> {
-		options = options || {};
+		options = this.getOptions(options);
 		options.method = options.method || RequestMethod.Patch;
 		options.url = options.url || url;
 		options.body = options.body || body;
@@ -174,7 +182,7 @@ export class InterceptorService extends Http {
 	 * Performs a request with `head` http method.
 	 */
 	head(url: string, options?: InterceptorOptions): Observable<Response> {
-		options = options || {};
+		options = this.getOptions(options);
 		options.method = options.method || RequestMethod.Head;
 		options.url = options.url || url;
 		return this.request(url, options);
@@ -184,7 +192,7 @@ export class InterceptorService extends Http {
 	 * Performs a request with `options` http method.
 	 */
 	options(url: string, options?: InterceptorOptions): Observable<Response> {
-		options = options || {};
+		options = this.getOptions(options);
 		options.method = options.method || RequestMethod.Options;
 		options.url = options.url || url;
 		return this.request(url, options);
